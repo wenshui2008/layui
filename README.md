@@ -111,6 +111,39 @@ layui.use(['layer', 'form'], function(){
 </script> 
 </body>
 </html>  
+
+```
+原始的layui的DOM元素选择器采用如下形式：
+$('.class[lay-filter="filter"]')
+这里不经用到了类
+，而且用到乐自定义属性，CSS类选择器选择器性能已经是足够低了，如果再加上自定义DOM属性来限定元素，再一次降低性能，因此扩充Elemeng的选择器方法，如下：
+
+Element.prototype.init = function(type, filter){
+    var that = this, elemFilter = function(){
+	  if (filter) {
+		if (typeof (filter) == 'string') {
+		  if (filter.charAt(0) == '#') {
+		    return filter;
+		  }
+		  else if (filter.indexOf('.') >= 0) {
+			return filter;
+		  }
+	    }
+		else if (typeof (filter) == 'object') {
+			return filter;
+		}
+	  }
+	  
+	  var className = '';
+	  if (type == 'nav') className = NAV_ELEM;
+	  else if (type == 'breadcrumb') className = '.layui-breadcrumb';
+	  else if (type == 'progress') className = '.layui-progress';
+	  else if (type == 'collapse') className = '.layui-collapse';
+      
+	  if (filter) return className + '[lay-filter="' + filter +'"]';
+	  else return className;
+    }(), items = {
+    
 ```
 ## [阅读文档](http://www.layui.com/)
 从现在开始，尽情地拥抱 layui 吧！但愿她能成为你长远的开发伴侣，化作你方寸屏幕前的亿万字节！
