@@ -116,9 +116,9 @@ layui.use(['layer', 'form'], function(){
 
 ```html
 原始的layui的DOM元素选择器采用如下形式：
-$('.class[lay-filter="filter"]')
-这里不经用到了类
-，而且用到乐自定义属性，CSS类选择器选择器性能已经是足够低了，如果再加上自定义DOM属性来限定元素，再一次降低性能，因此扩充Elemeng的选择器方法，如下：
+<strong color="green">$('.class[lay-filter="filter"]')</strong>
+这里不经用到了类，而且用到了自定义DOM属性，CSS类选择器选择器性能已经是足够低了。如果再加上自定义DOM属性来限定元素，再一次降低性能。
+因此扩充Element的选择器方法，如下：
 
 Element.prototype.init = function(type, filter){
     var that = this, elemFilter = function(){
