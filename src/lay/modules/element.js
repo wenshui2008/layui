@@ -78,9 +78,24 @@ layui.define('jquery', function(exports){
   
   //动态改变进度条
   Element.prototype.progress = function(filter, percent){
-    var ELEM = 'layui-progress'
-    ,elem = $('.'+ ELEM +'[lay-filter='+ filter +']')
-    ,elemBar = elem.find('.'+ ELEM +'-bar')
+    var ELEM = 'layui-progress';
+    var elem;
+
+	if (typeof(filter) == 'object')
+		elem = filter;
+	else if (typeof (filter) == 'string') {
+		if (filter.charAt(0) == '#')
+			elem = $(filter);
+		else if (filter.index('.') >= 0)
+			elem = $(filter);
+		else
+			elem = $('.'+ ELEM +'[lay-filter='+ filter +']');
+	}
+	else {
+		return this;
+	}
+	    
+	var elemBar = elem.find('.'+ ELEM +'-bar')
     ,text = elemBar.find('.'+ ELEM +'-text');
     elemBar.css('width', percent);
     text.text(percent);
@@ -254,7 +269,28 @@ layui.define('jquery', function(exports){
   //初始化元素操作
   Element.prototype.init = function(type, filter){
     var that = this, elemFilter = function(){
-      return filter ? ('[lay-filter="' + filter +'"]') : '';
+	  if (filter) {
+		if (typeof (filter) == 'string') {
+		  if (filter.charAt(0) == '#') {
+		    return filter;
+		  }
+		  else if (filter.indexOf('.') >= 0) {
+			return filter;
+		  }
+	    }
+		else if (typeof (filter) == 'object') {
+			return filter;
+		}
+	  }
+	  
+	  var className = '';
+	  if (type == 'nav') className = NAV_ELEM;
+	  else if (type == 'breadcrumb') className = '.layui-breadcrumb';
+	  else if (type == 'progress') className = '.layui-progress';
+	  else if (type == 'collapse') className = '.layui-collapse';
+      
+	  if (filter) return className + '[lay-filter="' + filter +'"]';
+	  else return className;
     }(), items = {
       
       //Tab选项卡
@@ -298,7 +334,7 @@ layui.define('jquery', function(exports){
           }
         }
         
-        $(NAV_ELEM + elemFilter).each(function(index){
+        $(elemFilter).each(function(index){
           var othis = $(this)
           ,bar = $('<span class="'+ NAV_BAR +'"></span>')
           ,itemElem = othis.find('.'+NAV_ITEM);
@@ -357,7 +393,7 @@ layui.define('jquery', function(exports){
       ,breadcrumb: function(){
         var ELEM = '.layui-breadcrumb';
         
-        $(ELEM + elemFilter).each(function(){
+        $(elemFilter).each(function(){
           var othis = $(this)
           ,ATTE_SPR = 'lay-separator'
           ,separator = othis.attr(ATTE_SPR) || '/'
@@ -374,7 +410,7 @@ layui.define('jquery', function(exports){
       //进度条
       ,progress: function(){
         var ELEM = 'layui-progress';
-        $('.' + ELEM + elemFilter).each(function(){
+        $(elemFilter).each(function(){
           var othis = $(this)
           ,elemBar = othis.find('.layui-progress-bar')
           ,percent = elemBar.attr('lay-percent');
@@ -397,7 +433,7 @@ layui.define('jquery', function(exports){
       ,collapse: function(){
         var ELEM = 'layui-collapse';
         
-        $('.' + ELEM + elemFilter).each(function(){
+        $(elemFilter).each(function(){
           var elemItem = $(this).find('.layui-colla-item')
           elemItem.each(function(){
             var othis = $(this)
