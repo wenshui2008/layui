@@ -113,6 +113,8 @@ layui.use(['layer', 'form'], function(){
 </html>  
 
 ```
+
+```html
 原始的layui的DOM元素选择器采用如下形式：
 $('.class[lay-filter="filter"]')
 这里不经用到了类
