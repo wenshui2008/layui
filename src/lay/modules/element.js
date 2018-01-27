@@ -31,10 +31,21 @@ layui.define('jquery', function(exports){
     return layui.onevent.call(this, MOD_NAME, events, callback);
   };
   
+  var getTabElem = function (filter) {
+	if (typeof(filter) == 'object')
+		return filter;
+	else if (typeof (filter) == 'string') {
+		if (filter.charAt(0) == '#')
+			return $(filter);
+		else if (filter.indexOf('.') >= 0)
+			return $(filter);
+	}
+	return $('.layui-tab[lay-filter='+ filter +']');
+  };
   //外部Tab新增
   Element.prototype.tabAdd = function(filter, options){
     var TITLE = '.layui-tab-title'
-    ,tabElem = $('.layui-tab[lay-filter='+ filter +']')
+    ,tabElem = getTabElem(filter)//$('.layui-tab[lay-filter='+ filter +']')
     ,titElem = tabElem.children(TITLE)
     ,barElem = titElem.children('.layui-tab-bar')
     ,contElem = tabElem.children('.layui-tab-content')
@@ -49,7 +60,7 @@ layui.define('jquery', function(exports){
   //外部Tab删除
   Element.prototype.tabDelete = function(filter, layid){
     var TITLE = '.layui-tab-title'
-    ,tabElem = $('.layui-tab[lay-filter='+ filter +']')
+    ,tabElem = getTabElem(filter)//$('.layui-tab[lay-filter='+ filter +']')
     ,titElem = tabElem.children(TITLE)
     ,liElem = titElem.find('>li[lay-id="'+ layid +'"]');
     call.tabDelete(null, liElem);
@@ -59,7 +70,7 @@ layui.define('jquery', function(exports){
   //外部Tab切换
   Element.prototype.tabChange = function(filter, layid){
     var TITLE = '.layui-tab-title'
-    ,tabElem = $('.layui-tab[lay-filter='+ filter +']')
+    ,tabElem = getTabElem(filter)//$('.layui-tab[lay-filter='+ filter +']')
     ,titElem = tabElem.children(TITLE)
     ,liElem = titElem.find('>li[lay-id="'+ layid +'"]');
     call.tabClick.call(liElem[0], null, null, liElem);
@@ -268,7 +279,7 @@ layui.define('jquery', function(exports){
   
   //初始化元素操作
   Element.prototype.init = function(type, filter){
-    var that = this, elemFilter = function(){
+    var that = this, elemFilter = function(type){
 	  if (filter) {
 		if (typeof (filter) == 'string') {
 		  if (filter.charAt(0) == '#') {
@@ -282,7 +293,6 @@ layui.define('jquery', function(exports){
 			return filter;
 		}
 	  }
-	  
 	  var className = '';
 	  if (type == 'nav') className = NAV_ELEM;
 	  else if (type == 'breadcrumb') className = '.layui-breadcrumb';
@@ -291,7 +301,7 @@ layui.define('jquery', function(exports){
       
 	  if (filter) return className + '[lay-filter="' + filter +'"]';
 	  else return className;
-    }(), items = {
+    }, items = {
       
       //Tab选项卡
       tab: function(){
@@ -334,7 +344,7 @@ layui.define('jquery', function(exports){
           }
         }
         
-        $(elemFilter).each(function(index){
+        $(elemFilter('nav')).each(function(index){
           var othis = $(this)
           ,bar = $('<span class="'+ NAV_BAR +'"></span>')
           ,itemElem = othis.find('.'+NAV_ITEM);
@@ -393,7 +403,7 @@ layui.define('jquery', function(exports){
       ,breadcrumb: function(){
         var ELEM = '.layui-breadcrumb';
         
-        $(elemFilter).each(function(){
+        $(elemFilter('breadcrumb')).each(function(){
           var othis = $(this)
           ,ATTE_SPR = 'lay-separator'
           ,separator = othis.attr(ATTE_SPR) || '/'
@@ -410,7 +420,7 @@ layui.define('jquery', function(exports){
       //进度条
       ,progress: function(){
         var ELEM = 'layui-progress';
-        $(elemFilter).each(function(){
+        $(elemFilter('progress')).each(function(){
           var othis = $(this)
           ,elemBar = othis.find('.layui-progress-bar')
           ,percent = elemBar.attr('lay-percent');
@@ -433,7 +443,7 @@ layui.define('jquery', function(exports){
       ,collapse: function(){
         var ELEM = 'layui-collapse';
         
-        $(elemFilter).each(function(){
+        $(elemFilter('collapse')).each(function(){
           var elemItem = $(this).find('.layui-colla-item')
           elemItem.each(function(){
             var othis = $(this)
